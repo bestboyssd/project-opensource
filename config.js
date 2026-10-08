@@ -6,6 +6,7 @@
  */
 window.SITE_CONFIG = {
   githubUsername: "bestboyssd",
+  siteRepositoryName: "project-opensource",
   maxProjects: 100,
   githubPagesUrl: "https://bestboyssd.github.io/project-opensource/",
   apiBaseUrl: "https://project-opensource.pages.dev"
