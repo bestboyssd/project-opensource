@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-labelledby="title">
+  <title id="title">Project Opensource</title>
+  <rect width="32" height="32" rx="8" fill="#d9f27d"/>
+  <g fill="none" stroke="#17251f" stroke-linecap="round" stroke-width="2">
+    <path d="M12 6.75H9.5a2.75 2.75 0 0 0-2.75 2.75V12M20 6.75h2.5a2.75 2.75 0 0 1 2.75 2.75V12M25.25 20v2.5a2.75 2.75 0 0 1-2.75 2.75H20M12 25.25H9.5a2.75 2.75 0 0 1-2.75-2.75V20"/>
+  </g>
+  <path d="m16 10 1.75 4.25L22 16l-4.25 1.75L16 22l-1.75-4.25L10 16l4.25-1.75z" fill="#17251f"/>
+  <circle cx="16" cy="16" r="1.45" fill="#d9f27d"/>
+</svg>
