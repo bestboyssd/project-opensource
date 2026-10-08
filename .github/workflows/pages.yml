@@ -30,7 +30,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           mkdir -p _site
-          cp index.html styles.css app.js config.js catalog.json privacy.html privacy.css _site/
+          cp index.html styles.css app.js config.js catalog.json privacy.html privacy.css icon.svg site.webmanifest _site/
           node scripts/fetch-projects.mjs
           touch _site/.nojekyll
       - name: Configure GitHub Pages
