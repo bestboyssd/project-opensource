@@ -18,6 +18,44 @@
   let activeFilter = "all";
   let visibleLimit = cardLimit;
 
+  function sectionFromHash(hash) {
+    try { return document.getElementById(decodeURIComponent(hash.replace(/^#/, ""))); }
+    catch { return null; }
+  }
+
+  function localSectionFor(link) {
+    try {
+      const url = new URL(link.href, window.location.href);
+      if (url.origin !== window.location.origin || url.pathname !== window.location.pathname || url.search !== window.location.search || !url.hash) return null;
+      return sectionFromHash(url.hash);
+    } catch { return null; }
+  }
+
+  function scrollToSection(section) {
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    section.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" });
+  }
+
+  // Keep native fragment links as a no-JavaScript fallback, but remove fragments
+  // in the live site so section navigation never changes the address bar.
+  if (window.location.hash) {
+    const initialSection = sectionFromHash(window.location.hash);
+    if (initialSection) {
+      window.history.replaceState(window.history.state, "", `${window.location.pathname}${window.location.search}`);
+      requestAnimationFrame(() => scrollToSection(initialSection));
+    }
+  }
+
+  document.addEventListener("click", event => {
+    if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    const link = event.target instanceof Element ? event.target.closest("a[href]") : null;
+    if (!link) return;
+    const section = localSectionFor(link);
+    if (!section) return;
+    event.preventDefault();
+    scrollToSection(section);
+  });
+
   const escapeHTML = (value = "") => String(value).replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
   const cleanText = value => typeof value === "string" ? value.trim() : "";
   const slug = value => String(value || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
