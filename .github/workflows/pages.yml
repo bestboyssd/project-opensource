@@ -3,6 +3,8 @@ name: Publish Project Opensource to GitHub Pages
 on:
   push:
     branches: [main]
+  schedule:
+    - cron: "17 */6 * * *"
   workflow_dispatch:
 
 permissions:
@@ -24,9 +26,12 @@ jobs:
       - name: Check out site source
         uses: actions/checkout@v4
       - name: Prepare public site files
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           mkdir -p _site
           cp index.html styles.css app.js config.js catalog.json privacy.html privacy.css _site/
+          node scripts/fetch-projects.mjs
           touch _site/.nojekyll
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5

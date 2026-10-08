@@ -156,15 +156,21 @@
     emptyMessage.textContent = "Gathering the projects from GitHub.";
     retryButton.hidden = true;
     try {
-      const apiBase = cleanText(baseConfig.apiBaseUrl).replace(/\/$/, "");
-      const projectsUrl = apiBase
-        ? `${apiBase}/api/projects?username=${encodeURIComponent(username)}`
-        : `https://api.github.com/users/${encodeURIComponent(username)}/repos?per_page=100&sort=updated&type=owner`;
-      const response = await fetch(projectsUrl, { headers: { Accept: "application/vnd.github+json" } });
-      if (response.status === 404) throw new Error(`The GitHub profile “${username}” could not be found. Check config.js or the admin catalog.`);
-      if (response.status === 403 || response.status === 429) throw new Error("GitHub is temporarily limiting requests. Please wait a little and try again.");
-      if (!response.ok) throw new Error("GitHub is having trouble responding. Please try again shortly.");
-      const data = await response.json();
+      const snapshot = await fetch(new URL("repos.json", document.baseURI), { cache: "no-store" });
+      let data;
+      if (snapshot.ok) {
+        data = await snapshot.json();
+      } else {
+        const apiBase = cleanText(baseConfig.apiBaseUrl).replace(/\/$/, "");
+        const projectsUrl = apiBase
+          ? `${apiBase}/api/projects?username=${encodeURIComponent(username)}`
+          : `https://api.github.com/users/${encodeURIComponent(username)}/repos?per_page=100&sort=updated&type=owner`;
+        const response = await fetch(projectsUrl, { headers: { Accept: "application/vnd.github+json" } });
+        if (response.status === 404) throw new Error(`The GitHub profile “${username}” could not be found. Check config.js or the admin catalog.`);
+        if (response.status === 403 || response.status === 429) throw new Error("GitHub is temporarily limiting requests. Please wait a little and try again.");
+        if (!response.ok) throw new Error("GitHub is having trouble responding. Please try again shortly.");
+        data = await response.json();
+      }
       if (!Array.isArray(data)) throw new Error("GitHub returned an unexpected response. Please try again shortly.");
       const siteRepo = `${username}/${cleanText(baseConfig.siteRepositoryName)}`.toLowerCase();
       const publicRepos = data.filter(repo => !repo.fork && !repo.private && repo.full_name.toLowerCase() !== siteRepo);
