@@ -160,3 +160,29 @@ main { background: var(--paper); }
   .art-orbit { left:-18px; width:320px; }
   .orbit-b { left:6px; width:290px; }
 }
+
+/* Seamless, phone-first phrase ticker */
+.ticker { position:relative; isolation:isolate; overflow:hidden; border-top:1px solid #d4e2a6; border-bottom:1px solid #cbd99e; background:#e7f1c2; color:var(--ink); }
+.ticker::before,.ticker::after { position:absolute; z-index:1; top:0; bottom:0; width:clamp(14px,4vw,44px); content:""; pointer-events:none; }
+.ticker::before { left:0; background:linear-gradient(90deg,#e7f1c2,transparent); }
+.ticker::after { right:0; background:linear-gradient(270deg,#e7f1c2,transparent); }
+.ticker-track { display:flex; width:max-content; min-height:48px; gap:0; padding:0; animation:ticker-scroll 32s linear infinite; will-change:transform; font:700 9px/1 var(--mono); letter-spacing:1.05px; }
+.ticker-group { display:flex; flex:0 0 100vw; align-items:center; justify-content:space-around; gap:clamp(14px,3vw,34px); min-width:100vw; padding:0 clamp(22px,5vw,68px); }
+.ticker-group span { white-space:nowrap; }
+.ticker-track i { display:grid; width:20px; height:20px; flex:0 0 20px; place-items:center; border:1px solid rgba(81,116,98,.2); border-radius:50%; background:rgba(255,255,255,.38); color:#587347; font:normal 11px/1 var(--body); }
+.ticker:hover .ticker-track { animation-play-state:paused; }
+@keyframes ticker-scroll { to { transform:translateX(-50%); } }
+@media (max-width:600px) {
+  .ticker-track { min-height:45px; animation-duration:27s; font-size:8px; letter-spacing:.75px; }
+  .ticker-group { gap:clamp(8px,3vw,15px); padding:0 18px; }
+  .ticker-track i { width:18px; height:18px; flex-basis:18px; font-size:10px; }
+}
+@media (max-width:365px) {
+  .ticker-track { font-size:7px; letter-spacing:.55px; }
+  .ticker-group { gap:6px; padding:0 12px; }
+}
+@media (prefers-reduced-motion:reduce) {
+  .ticker-track { width:100%; animation:none; transform:none; }
+  .ticker-group { min-width:100%; flex-basis:100%; justify-content:center; gap:clamp(8px,2.5vw,18px); padding:0 10px; }
+  .ticker-group + .ticker-group { display:none; }
+}

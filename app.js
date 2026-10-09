@@ -178,12 +178,33 @@
   }
 
   async function readCatalog() {
+    const apiBase = cleanText(baseConfig.apiBaseUrl).replace(/\/$/, "");
+    let fallback = {};
     try {
       const response = await fetch("catalog.json", { cache: "no-store" });
-      if (!response.ok) return {};
-      const data = await response.json();
-      return data && typeof data === "object" && !Array.isArray(data) ? data : {};
-    } catch { return {}; }
+      if (response.ok) {
+        const data = await response.json();
+        if (data && typeof data === "object" && !Array.isArray(data)) fallback = data;
+      }
+    } catch {}
+    if (apiBase) {
+      try {
+        const response = await fetch(`${apiBase}/api/catalog`, { mode: "cors", cache: "no-store" });
+        if (response.ok) {
+          const live = await response.json();
+          if (live.published && live.catalog && typeof live.catalog === "object" && !Array.isArray(live.catalog)) {
+            try { localStorage.setItem("project-opensource:published-catalog", JSON.stringify(live.catalog)); } catch {}
+            return live.catalog;
+          }
+          return fallback;
+        }
+      } catch {}
+    }
+    try {
+      const cached = JSON.parse(localStorage.getItem("project-opensource:published-catalog") || "null");
+      if (cached && typeof cached === "object" && !Array.isArray(cached)) return cached;
+    } catch {}
+    return fallback;
   }
 
   async function loadProjects() {
